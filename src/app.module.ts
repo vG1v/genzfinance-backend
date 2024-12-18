@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { UserAccountsModule } from './user-accounts/user-accounts.module';
-import { AccountTransactionsModule } from './account-transactions/account-transactions.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/user.entity';
@@ -30,7 +29,6 @@ dotenv.config({
     }),
     UsersModule,
     UserAccountsModule,
-    AccountTransactionsModule,
     CategoriesModule,
     AuthModule,
     TransactionsModule,
