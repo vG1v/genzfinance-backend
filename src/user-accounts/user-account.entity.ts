@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { User } from '../users/user.entity'; // Import the User entity
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { User } from '../users/user.entity';
+import { Transaction } from '../transactions/transaction.entity';
 
 @Entity('user_account')
 export class UserAccount {
@@ -7,6 +8,7 @@ export class UserAccount {
   id: number;
 
   @ManyToOne(() => User, (user) => user.userAccounts)
+
   @JoinColumn({ name: 'user_id' })
   user: User;
 
@@ -27,4 +29,7 @@ export class UserAccount {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(() => Transaction, transaction => transaction.userAccount)
+  transactions: Transaction[];
 }

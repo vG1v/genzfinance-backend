@@ -7,6 +7,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/user.entity';
 import { UserAccount } from './user-accounts/user-account.entity';
+import { TransactionsModule } from './transactions/transactions.module';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
@@ -24,7 +25,7 @@ dotenv.config({
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
       entities: [User, UserAccount],
-      synchronize: true,
+      synchronize: false,
       logging: true,
     }),
     UsersModule,
@@ -32,6 +33,7 @@ dotenv.config({
     AccountTransactionsModule,
     CategoriesModule,
     AuthModule,
+    TransactionsModule,
   ],
 })
 export class AppModule {}
