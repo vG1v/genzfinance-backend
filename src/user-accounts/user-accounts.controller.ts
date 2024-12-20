@@ -4,14 +4,16 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('user-accounts')
 export class UserAccountsController {
-  constructor(private readonly userAccountsService: UserAccountsService) {}
+  constructor(
+    private readonly userAccountsService: UserAccountsService,
+  ) { }
 
   // Create a new user account
   @Post('create')
   @UseGuards(JwtAuthGuard)
   async createUserAccount(
     @Body() body: { account_name: string; balance: number },
-    @Param('userId') userId: number, 
+    @Param('userId') userId: number,
   ) {
     return this.userAccountsService.createUserAccount(userId, body.account_name, body.balance);
   }

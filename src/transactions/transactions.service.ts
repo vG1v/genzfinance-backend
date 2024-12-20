@@ -31,8 +31,6 @@ export class TransactionsService {
         if (!userAccount) {
             throw new NotFoundException('User account not found');
         }
-
-        // Create a new transaction linked to the user's account
         const transaction = this.transactionRepository.create({
             userAccount,
             amount,
