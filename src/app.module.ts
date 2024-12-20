@@ -9,6 +9,7 @@ import { UserAccount } from './user-accounts/user-account.entity';
 import { TransactionsModule } from './transactions/transactions.module';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { Transaction } from './transactions/transaction.entity';
 
 dotenv.config({
   path: path.resolve(process.cwd(), `.env.${process.env.NODE_ENV}`),
@@ -23,8 +24,8 @@ dotenv.config({
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [User, UserAccount],
-      synchronize: false,
+      entities: [User, UserAccount, Transaction],
+      synchronize: true,
       logging: true,
     }),
     UsersModule,

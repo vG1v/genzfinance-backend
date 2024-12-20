@@ -1,22 +1,20 @@
+// auth/auth.module.ts
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
 import { User } from '../users/user.entity';
+import { JwtSharedModule } from './jwt-shared.module'; // Import shared module
 
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: 'vornLovesecret69420!',  
-      signOptions: { expiresIn: '1h' }, 
-    }),
+    JwtSharedModule, 
     TypeOrmModule.forFeature([User]),
     UsersModule,
   ],
   providers: [JwtStrategy],
-  exports: [JwtModule, PassportModule],
+  exports: [PassportModule],
 })
 export class AuthModule {}
