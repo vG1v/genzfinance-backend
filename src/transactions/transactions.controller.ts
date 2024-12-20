@@ -8,7 +8,7 @@ export class TransactionsController {
 
     // Create a new transaction (protected route)
     @Post('create')
-    @UseGuards(JwtAuthGuard) 
+    @UseGuards(JwtAuthGuard)
     async createTransaction(
         @Body() body: { userAccountId: number; amount: number; type: 'income' | 'expense'; name?: string },
         @Param('userId') userId: number,
@@ -24,8 +24,15 @@ export class TransactionsController {
 
     // Get all transactions for a user (protected route)
     @Get('user/:userId')
-    @UseGuards(JwtAuthGuard) 
+    @UseGuards(JwtAuthGuard)
     async getTransactionsByUserId(@Param('userId') userId: number) {
         return this.transactionsService.getTransactionsByUserId(userId);
+    }
+
+    // Get all transactions for a specific user account (protected route)
+    @Get('account/:accountId')
+    @UseGuards(JwtAuthGuard)
+    async getTransactionsByAccountId(@Param('accountId') accountId: number) {
+        return this.transactionsService.getTransactionsByAccountId(accountId);
     }
 }

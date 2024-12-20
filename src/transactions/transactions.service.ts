@@ -15,7 +15,7 @@ export class TransactionsService {
 
     // Create a new transaction
     async createTransaction(
-        userId: number, 
+        userId: number,
         userAccountId: number,
         amount: number,
         type: 'income' | 'expense',
@@ -31,8 +31,6 @@ export class TransactionsService {
         if (!userAccount) {
             throw new NotFoundException('User account not found');
         }
-
-        // Create a new transaction linked to the user's account
         const transaction = this.transactionRepository.create({
             userAccount,
             amount,
@@ -52,6 +50,12 @@ export class TransactionsService {
                 }
             },
             relations: ['userAccount'],
+        });
+    }
+    // Get all transactions for a specific user account
+    async getTransactionsByAccountId(accountId: number): Promise<Transaction[]> {
+        return this.transactionRepository.find({
+            where: { userAccount: { id: accountId } },
         });
     }
 

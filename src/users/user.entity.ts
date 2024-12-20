@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity('users')
 export class User {
@@ -17,11 +18,22 @@ export class User {
   @Column({ type: 'text', nullable: true })
   profilePicture: string;
 
+  @Column({ nullable: true })
+  refreshToken: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
-  @CreateDateColumn()
+  @UpdateDateColumn()
   updatedAt: Date;
 
   userAccounts: any;
+
+  async setRefreshToken(token: string): Promise<void> {
+    this.refreshToken = await bcrypt.hash(token, 10);
+  }
+
+  async validateRefreshToken(token: string): Promise<boolean> {
+    return this.refreshToken && (await bcrypt.compare(token, this.refreshToken));
+  }
 }

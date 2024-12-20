@@ -1,22 +1,32 @@
-import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+// auth.module.ts
+import { forwardRef, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
 import { User } from '../users/user.entity';
+import { JwtSharedModule } from './jwt-shared.module';
+
+// Destroy Token for Logout logic
+export class TokenBlacklistService {
+  private blacklistedTokens: Set<string> = new Set();
+
+  addTokenToBlacklist(token: string) {
+    this.blacklistedTokens.add(token);
+  }
+  isTokenBlacklisted(token: string): boolean {
+    return this.blacklistedTokens.has(token);
+  }
+}
 
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: 'vornLovesecret69420!',  
-      signOptions: { expiresIn: '1h' }, 
-    }),
+    JwtSharedModule,
     TypeOrmModule.forFeature([User]),
-    UsersModule,
+    forwardRef(()=> UsersModule),
   ],
-  providers: [JwtStrategy],
-  exports: [JwtModule, PassportModule],
+  providers: [JwtStrategy, TokenBlacklistService],
+  exports: [PassportModule, TokenBlacklistService],
 })
 export class AuthModule {}

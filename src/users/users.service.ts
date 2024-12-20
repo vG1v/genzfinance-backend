@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -9,11 +9,10 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   // Create a new user
   async createUser(username: string, password: string, email: string): Promise<User> {
-    // Check for existing user
     const existingUser = await this.userRepository.findOne({
       where: [{ email }, { username }],
     });
@@ -33,6 +32,32 @@ export class UsersService {
       return user;
     }
     return null;
+  }
+
+  // Save a new refresh token
+  async saveRefreshToken(userId: number, refreshToken: string): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    await user.setRefreshToken(refreshToken);
+    await this.userRepository.save(user);
+  }
+
+  // Validate refresh token and remove it if valid
+  async validateAndClearRefreshToken(userId: number, token: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const isValid = user.refreshToken && (await bcrypt.compare(token, user.refreshToken));
+    if (isValid) {
+      // Clear the old refresh token
+      user.refreshToken = null;
+      await this.userRepository.save(user);
+    }
+    return isValid;
   }
 
   // Find all users
@@ -69,4 +94,15 @@ export class UsersService {
 
     return this.userRepository.save(user);
   }
+
+  // Clear the refresh token for a user
+  async clearRefreshToken(userId: number): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    user.refreshToken = null;
+    await this.userRepository.save(user);
+  }
+
 }
